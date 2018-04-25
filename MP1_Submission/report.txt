@@ -1,0 +1,30 @@
+Simple Matrix Multiplication
+
+1.  How many times is each element of the input matrices loaded during the execution of the kernel?
+ 
+    - 32 times (which is equal to the matrix size) 
+      Each row of M will be crossed against all columns of N to compute
+      elements of Prow. To compute that whole row of P, we access the same row of M against all the columns of N.
+      So we access that row of M 32 times which implies we access each input element of that row 32 times. 
+      Same thing happens for all other rows of M. So all input elements of M are accessed 32 times. 
+      
+      Similarly each column of N will be crossed against all rows of M to compute elements of Pcol. To compute whole
+      column of P, we access all the rows of M against the same column of N. Hence we access that column of N 32 times
+      which implies we access each input element of that column 32 times. Same thing happens for all other columns of N. 
+      So all input elements of N are also accessed 32 times. 
+    
+      So all the input elements of M and N matrices are accessed 32 times.
+
+
+2.  What is the memory-access to floating-point computation ratio in each thread?  
+    Consider a multiply and addition as separate operations, and ignore the storing 
+    of the result.  Only global memory loads should be counted towards 
+    your off-chip bandwidth.
+
+    - There are 2 global memory access in the for loop of kernel function, each of 4 bytes (float values).
+      Hence, total 8 bytes are accessed. And there are 2 FLOPS (Floating Point Operations), one multiplication
+      and one addition. Therefore,
+         8B/s / 2FLOP => 4B/s / 1FLOP => 4GB/s / 1GFLOPS
+
+         Therefore, memory access to floating point computation ratio =  4GB/s / 1GFLOPS
+

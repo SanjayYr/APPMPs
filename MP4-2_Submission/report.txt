@@ -1,0 +1,39 @@
+1. Near the top of scan largearray.cu, set #define DEFAULT NUM ELEMENTS
+to 16777216. Set #define MAX RAND to 3. Then, record the performance
+results when you run the code without arguments. Include the host (CPU)
+and device (GPU) processing times and the speedup.
+
+   - As posted on the discussion forum, my kernel only supports upto 1million elements (1048576).
+     This is because, I have chosen TILE_SIZE to be 1024. Hence, after 2 iterations (1024^2) the reduced sum 
+     will be one element. If it is more than 1, then I have to call the kernel for one more iteration.
+     As the requirement was 1million, I have implemented my kernel for only 2 iterations.
+     
+     Speed up in the above case:
+
+     Processing 1048576 elements...
+     CPU Processing time: 6.022930 (ms)
+     GPU Processing time: 0.161792 (ms)
+     Speedup: 37.226379X
+     Test PASSED
+
+
+2. Describe how you handled input arrays that are not a power of two in size.
+Also describe any other performance-enhancing optimizations you added.
+
+   - For input arrays that are not a power of two, I padded zeros at the end on input to make it power of 2.
+     And later, I consider output elements for only the actual input size without padding.
+
+3. How do the measured FLOPS rates for the CPU and GPU kernels com-
+pare with each other, and with the theoretical performance limits of each
+architecture? For your GPU implementation, discuss what bottlenecks
+are likely limiting the performance of your code.
+
+   - CPU does exactly n adds for n elements. On an input of 1048576 elements,
+      Number of FLOPs = 1048576 / CPU Processing time
+                      = 1048576 / 6.022930 ms
+                      = .174097 GFLOPS
+
+   - GPU does 2*(N-1) adds and N-1 swaps.
+      Number of FLOPs = 3 * (1048576-1) / GPU Processing time
+                      = 19.44 GFLOPS
+ 

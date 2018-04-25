@@ -1,0 +1,33 @@
+Tiled Matrix Multiplication
+
+    In your kernel implementation, how many threads can be simultaneously executing
+    on a GeForce GTX 1080 GPU, which contains 20 Streaming Multiprocessors. Use
+    nvcc --ptxas-options="-v" matrixmul_kernel.cu to see the resource usage of 
+    your kernel (although compilation will fail, it will only do so after
+    compiling the kernel and displaying the relevant information.)
+
+   - Physical Limits of GeForce GTX 1080 GPU:
+     ===========================================
+     Threads per Warp	                    32
+     Max Warps per Multiprocessor	    64
+     Max Thread Blocks per Multiprocessor   32
+     Max Threads per Multiprocessor	    2048
+     Maximum Thread Block Size	            1024
+
+
+     From the resource usage of my kernel, it shows my kernel uses 28 registers per block
+     and 8192 bytes of shared memory per block. And I have chosen 1024 threads per block 
+     in my code which implies TILE_WIDTH or BLOCK_WIDTH of size 32. 
+     When I put the above information in CUDA Occupancy Calculator, it shows GPU Occupancy Data as:
+
+     Active Threads per Multiprocessor:		2048
+     Active Warps per Multiprocessor:           64
+     Active Thread Blocks per Multiprocessor:   2
+     Occupancy of each Multiprocessor:		100%
+
+     From the above data, there can be 2048 active threads per multiprocessor in my kernel.
+     Hence, total number of threads that can be simultaneously executing on a GeForce GTX 1080 GPU
+     with 20 SMs is:
+
+                    2048 * 20 = 40960 threads
+

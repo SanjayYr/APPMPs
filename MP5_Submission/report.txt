@@ -1,0 +1,19 @@
+1) Changes made for the optimization:
+   - Initially tried with the number of threads to be launched as equal to the size of input.
+     Then fixed the the number of threads to 1024*1024 for any arbitrary input size. 
+     Keeping number of threads equal to the input size created thread creation overhead which 
+     decreased the performance. Hence made the number of threads constant to 1024*1024 so that 
+     each thread will have enough input to process.
+
+   - To reduce the memory copy and freeing time after the kernel has computed the output, I am launching
+    another kernel to copy the uint32 bins to uint8 bins.
+
+2) Any difficulties with completing the optimization correctly.
+   - Had to try different input sizes to notice changes in the performance.
+
+3)  The amount of time spent on the optimization (even if it was abandoned before working)
+  - Tried implementing the atomicAdd for uint8_t using atomicCAS using bit shift masking. But it was not 
+    working for me. May be I was missing something. I spent a lot of time on that. Then I switched to using 
+    the uint32 one and copying the output to uint8 bins.
+
+ 

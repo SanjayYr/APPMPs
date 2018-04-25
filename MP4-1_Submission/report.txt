@@ -1,0 +1,25 @@
+Data Parallel Reduction
+
+1.  How many times does your thread block synchronize to reduce its portion
+    of an array to a single value?
+   
+   - 5 times. When the input size becomes 32(Warp size) and below, thread block 
+     needs to synchronize. So, it ssynchronizes when input size is 32, 16, 8, 4 and 2 
+
+
+
+2.  What is the minimum, maximum, and average number of "real" operations
+    that a thread will perform? "Real" operations are those that directly
+    contribute to the final reduction value, i.e., iterations of the reduction
+    computation.
+
+   - Minimum  =  1 as in the first step all the threads are involved in reduction.
+     From next step, the number of threads doing real operations becomes half.
+     Maximum  = log2(2*BLOCK_SIZE) as thread 0 will always be doing the operation 
+     until last step. To reduce, 2*BLOCK_SIZE elements to 1, it takes log2(2*BLOCK_SIZE) steps.
+     Average  = Total number of operations / BLOCK_SIZE
+              = (BLOCK_SIZE + BLOCK_SIZE/2 + .... + 1) / BLOCK_SIZE
+              = (2 * BLOCK_SIZE - 1) / BLOCK_SIZE
+             
+     
+

@@ -1,0 +1,72 @@
+Tiled 2D Convolution
+
+3)  Report.
+    It's time to do some performance testing and analysis.  Included in the 
+    MP3-convolution_block folder is a folder called "test", which contains two 
+    test case input sets.  Using these test cases, and any others that you wish 
+    to create to support your findings, provide answers to the following questions, 
+    along with a short description of how you arrived at those answers.  
+
+    You are free to use any timing library you like, as long as it has a reasonable 
+    accuracy.  Search for the section on Timing in the CUDA C BestPractices Guide to 
+    learn about how to use CUDA timing libraries. 
+
+    Remember that kernel invocations are normally asynchronous, so if you want accurate
+    timing of the kernel's running time, you need to insert a call to
+    cudaDeviceSynchronize() after the kernel invocation.  
+
+    1.  What is the measured floating-point computation rate for the CPU and GPU kernels 
+    in this application?  How do they each scale with the size of the input? 
+ 
+      -->
+                  Size1 input: 32
+                                 GPU kernel execution time: 0.049824 ms
+				 GPU overhead time = 227.156117 ms
+				 CPU kernel inner most for loop count: 23716
+				 CPU kernel execution time = 0.092258 ms
+
+                                 Number of threads doing computation = 12*12 * 3*3 = 1296 = k
+                                 Total flop = k * 5*5 * 2 = 64800
+
+				 GPU Floating-point computation rate = Total FLOP / GPU kernel execution time
+								     = 64800 / 0.049824 ms
+								     = 1.300578 GFLOPS
+                                 CPU Floating-point computation rate = Total CPU FLOP / CPU kernel execution time
+                                                                     = 23716*2 / 0.092258 ms
+                                                                     = 0.514123 GFLOPS
+
+                 Size2 input:  1024
+				
+				GPU kernel execution time: 0.071840 ms
+				GPU overhead time = 232.980181 ms
+				CPU kernel inner most for loop count: 26152996
+				CPU kernel execution time = 82.742187 ms
+
+                                Number of threads doing computation = 12*12 * 86*86 = 1065024 = k
+                                Total flop = k * 5*5 * 2 = 53251200
+ 
+ 				GPU Floating-point computation rate = Total FLOP / GPU kernel execution time
+                                                                     = 53251200 / 0.071840 ms
+                                                                     = 741.247216 GFLOPS
+                                CPU Floating-point computation rate = Total CPU FLOP / CPU kernel execution time
+                                                                     = 26152996*2 / 82.742187 ms
+                                                                     = 0.632156 GFLOPS 
+
+      --> GPU Floating-point computation rate increases drastically with the increasing input size (1.3GFLOPS 
+          to 741 GFLOPS) until the peak computation rate is met or someother limiting factor comes into play
+
+          CPU Floating-point computation rate does not increase much with the input size as compared to the
+	  GPU case.
+
+    2.  How much time is spent as an overhead cost of using the GPU for
+    computation?  Consider all code executed within your host function, with
+    the exception of the kernel itself, as overhead.  How does the overhead scale 
+    with the size of the input?
+
+     -->  Size 32:    GPU overhead time = 227.156117 ms
+          Size 1024:  GPU overhead time = 232.980181 ms
+
+          GPU overhead time increases by only about 5ms(2.5%) for increase in input size from 32 to 1024 
+          (increase by a factor of square). Change in GPU overhead time is not much with increasing input size.
+          Hence, by using GPU for larger input size computations we can achieve very high performance compared to CPU.
+
